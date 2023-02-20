@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import CustomerForm from './components/CustomerForm';
-import DragAndDrop from './components/DragAndDrop';
-import DropArea1 from './components/DropArea1';
-import DropArea2 from './components/DropArea2';
-import DropArea3 from './components/DropArea3';
-import DropArea4 from './components/DropArea4';
+import CustomerForm from './component/CustomerForm';
+import DragAndDrop from './component/DragAndDrop';
+import DropArea1 from './component/DropArea1';
+import DropArea2 from './component/DropArea2';
+import DropArea3 from './component/DropArea3';
+import DropArea4 from './component/DropArea4';
 
 
-const url = 'http://localhost:3030'
+const url = 'https://logistics-backend.onrender.com'
 
 function App() {
   const [customers, setCustomers] = useState([]);
