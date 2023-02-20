@@ -1,50 +1,100 @@
 import React, { useState, useEffect } from "react";
-import PlannerColumn from "./PlannerColumn";
-import axios from "axios";
+import DropArea from "./DropArea";
 
-const Planner = () => {
-  const [plannerData, setPlannerData] = useState([]);
+function Planner() {
+  const [date, setDate] = useState(new Date().toISOString().substr(0, 10)); // Set default date to today
+  const [slots, setSlots] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
 
-  const url = 'http://localhost:3030'
-
-  useEffect(() => {
-    const fetchPlannerData = async () => {
-      const res = await axios.get(`${url}/api/planner`);
-      setPlannerData(res.data);
-    };
-    fetchPlannerData();
-  }, []);
-
-  const handleDrop = (e, slotNumber) => {
-    const customerData = JSON.parse(e.dataTransfer.getData("customer"));
-    const newPlannerData = plannerData.map((day) => {
-      if (day.date === customerData.date) {
-        return {
-          ...day,
-          [slotNumber]: customerData.customerId,
-        };
-      }
-      return day;
-    });
-    setPlannerData(newPlannerData);
-    axios.put(`${url}/api/planner`, {
-      date: customerData.date,
-      slot: slotNumber,
-      customerId: customerData.customerId,
-    });
+  const url = 'https://logistics-backend.onrender.com'
+  
+  const handleDateChange = event => {
+  setDate(event.target.value);
   };
 
-  return (
-    <div className="planner-container">
-      {plannerData.map((plannerColumn) => (
-        <PlannerColumn
-          key={plannerColumn.date}
-          plannerColumn={plannerColumn}
-          onDrop={handleDrop}
-        />
-      ))}
-    </div>
-  );
-};
+  const handleDrag = (e) => {
+   e.preventDefault();
+   e.stopPropagation();
+   if(e.type === "dragenter" || e.type === "dragover" ){
+    setDragActive(false)
+   }else if(e.type === "dragleave") {
+    setDragActive(false)
+   }
 
-export default Planner;
+  }
+
+  const handleSubmit = (e) => {
+
+  }
+   
+  // Fetch the planner slots for the selected date from the server
+  useEffect(() => {
+  fetch(`${url}/planner/${date}`)
+  .then(res => res.json())
+  .then(data => setSlots(data))
+  .catch(err => console.error(err));
+  }, [date]);
+
+  const handleDrop = (event, slotNumber) => {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  console.log('uploading')
+  let data;
+  const customer_id = event.dataTransfer.getData('customer_id');
+  fetch(`{url}/planner/${customer_id}/${date}`, { method: 'POST', body: JSON.stringify(data) })
+  .then(res => res.text())
+  .then(message => console.log(message))
+  .catch(err => console.error(err));
+  };
+  
+  return (
+  <div>
+  <h2>Planner</h2>
+  <div>
+  <label htmlFor="date-picker">Select Date:</label>
+  <input type="date" id="date-picker" value={date} onChange={handleDateChange} />
+  </div>
+  
+  <div>
+
+<div>
+  <h3>Slot 1</h3>
+  <div  style={{ width: '300px', height: '100px', border: '2px dashed green' }}>
+  <DropArea date={date} />
+  </div>
+  <button type="submit">Remove</button>
+</div>
+
+<div>
+  <h3>Slot 2</h3>
+  <div  style={{ width: '300px', height: '100px', border: '2px dashed green' }}>
+  <DropArea date={date} />
+  </div>
+  <button type="submit">Remove</button>
+</div>
+
+<div>
+  <h3>Slot 3</h3>
+  <div  style={{ width: '300px', height: '100px', border: '2px dashed green' }}>
+  <DropArea date={date} />
+  </div>
+  <button type="submit">Remove</button>
+</div>
+
+<div>
+  <h3>Slot 4</h3>
+  <div  style={{ width: '300px', height: '100px', border: '2px dashed green' }}>
+  <DropArea date={date} />
+  </div>
+  <button type="submit">Remove</button>
+</div>
+
+
+ 
+  </div>
+  </div>
+  );
+  }
+
+  export default Planner;
