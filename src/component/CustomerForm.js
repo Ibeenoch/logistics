@@ -4,8 +4,7 @@ function CustomerForm({ onAddCustomer, setReload }) {
   const [name, setName] = useState('');
   const [pickUpLocation, setPickUpLocation] = useState('');
   const [dropOffLocation, setDropOffLocation] = useState('');
-  const url = 'http://localhost:3030'
-
+  const url = 'https://logistics-backend.onrender.com'
   const handleSubmit = event => {
     event.preventDefault();
     const customer = { name, pick_up_location: pickUpLocation, drop_off_location: dropOffLocation };
